@@ -1,0 +1,12 @@
+{
+    "env":{
+        "MYSQL_USER": "bb476c97a0149b",
+        "MYSQL_PSW": "f92c8df5",
+        "MYSQL_DATABASE": "heroku_9803d2732e9dd74",
+        "MYSQL_HOST": "us-cdbr-east-04.cleardb.com",
+        "MYSQL_PORT": 3306,
+
+        "JWT_KEY": "KeyProjectDApi#374",
+        "URL_API": "https://project-d-api.herokuapp.com/"
+    }
+}
