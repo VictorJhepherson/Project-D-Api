@@ -11,7 +11,7 @@ exports.login = (req, res, next) => {
                          FROM SYSTEMUSERS
                         INNER JOIN AVATARS
                            ON SYSTEMUSERS.SU_PHOTO = AVATARS.AVATAR_ID
-                        WHERE SU_LOGINNAME = ?`;
+                        WHERE SU_NICKNAME = ?`;
         conn.query(query, [req.body.SU_NICKNAME], (error, results, fields) => {
             conn.release();
             if(error) { return res.status(500).send({ error: error }) }
