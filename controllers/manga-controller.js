@@ -53,11 +53,11 @@ exports.registerMangas = (req, res, next) => {
             'CALL REGISTER_MANGAS(?);', 
             [ req.body.MG_TITLE ],
             (error, result, field) => {
-                if(result.length == 0) {
+                if(result.length <= 0) {
                     res.status(409).send({ mensagem: 'Não foi possível cadastrar o mangá'})
                 } else {
                     fs.readdir(req.body.MGC_PATH, (err, files) => {
-                        if(err) { return res.status(500).send({ error: err }) }
+                        if(err) { return res.status(500).send({ error: err, files: files }) }
                         files.forEach(file => {
                             conn.query(
                                 'CALL REGISTER_CHAPTERS(?, ?);', 
