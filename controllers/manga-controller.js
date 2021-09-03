@@ -56,19 +56,16 @@ exports.registerMangas = (req, res, next) => {
                 if(error) {
                     res.status(409).send({ error: error, mensagem: 'Não foi possível cadastrar o mangá'})
                 } else {
-                    console.log(result.insertId);
-                    fs.readdir(req.body.MG_PATH, (err, files) => {
-                        if(err) { conn.rollback();  return res.status(500).send({ error: err, mensagem: 'Leitura da pasta' }) }
+                    const path = req.body.MG_PATH;
+                    fs.readdir(path, (err, files) => {
+                        if(err) { return res.status(500).send({ error: err, mensagem: 'Leitura da pasta' }) }
                         files.forEach(file => {
                             conn.query(
                                 'CALL REGISTER_CHAPTERS(?, ?);', 
                                 [ result.insertId, file ],
                                 (error, result, field) => {
-                                    if(error) { 
-                                        conn.rollback(); 
-                                        conn.release();
-                                        return res.status(500).send({ error: error, mensagem: 'REGISTER_CHAPTERS' }) 
-                                    }
+                                    conn.release();
+                                    if(error) { return res.status(500).send({ error: error, mensagem: 'REGISTER_CHAPTERS' }) }
                     
                                     return res.status(201).send({
                                         mensagem: 'Mangá criado com sucesso'
