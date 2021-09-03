@@ -53,7 +53,7 @@ exports.registerMangas = (req, res, next) => {
             'CALL REGISTER_MANGAS(?, ?);', 
             [ req.body.MG_TITLE, req.body.MG_PATH ],
             (error, result, field) => {
-                if(result == null) {
+                if(error) {
                     res.status(409).send({ mensagem: 'Não foi possível cadastrar o mangá'})
                 } else {
                     fs.readdir(req.body.MG_PATH, (err, files) => {
@@ -61,7 +61,7 @@ exports.registerMangas = (req, res, next) => {
                         files.forEach(file => {
                             conn.query(
                                 'CALL REGISTER_CHAPTERS(?, ?);', 
-                                [ result.MG_ID, file ],
+                                [ result.insertId, file ],
                                 (error, result, field) => {
                                     conn.release();
                                     if(error) { res.status(500).send({ error: error }) }
