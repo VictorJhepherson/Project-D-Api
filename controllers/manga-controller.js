@@ -50,8 +50,8 @@ exports.registerMangas = (req, res, next) => {
     mysql.getConnection((error, conn) => {
         if(error) { return res.status(500).send({ error: error }) }
         conn.query(
-            'CALL REGISTER_MANGAS(?);', 
-            [ req.body.MG_TITLE ],
+            'CALL REGISTER_MANGAS(?, ?);', 
+            [ req.body.MG_TITLE, req.body.MGC_PATH ],
             (error, result, field) => {
                 if(result.length <= 0) {
                     res.status(409).send({ mensagem: 'Não foi possível cadastrar o mangá'})
@@ -61,7 +61,7 @@ exports.registerMangas = (req, res, next) => {
                         files.forEach(file => {
                             conn.query(
                                 'CALL REGISTER_CHAPTERS(?, ?);', 
-                                [ result[0].MG_ID, req.body.MGC_PATH + file ],
+                                [ result[0].MG_ID, file ],
                                 (error, result, field) => {
                                     conn.release();
                                     if(error) { res.status(500).send({ error: error }) }

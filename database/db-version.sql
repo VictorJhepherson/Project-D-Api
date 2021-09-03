@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS MANGAS
 (
     MG_ID         INT NOT NULL PRIMARY KEY,
     MG_TITLE      VARCHAR(100),
+    MG_PATH       VARCHAR(500),
 	MG_REGDATE    DATE
 );
 
@@ -29,7 +30,7 @@ CREATE TABLE IF NOT EXISTS MANGACHAPTERS
     MGC_ID         INT NOT NULL PRIMARY KEY,
     MG_ID          INT,
     MGC_SEQCHAPTER INT,
-    MGC_PATH       VARCHAR(500),
+    MGC_ARCHIVE    VARCHAR(500),
     MGC_REGDATE    DATE
 );
 
@@ -68,7 +69,8 @@ BEGIN
 END
 
 CREATE PROCEDURE `REGISTER_MANGAS`(
-	IN P_MG_TITLE VARCHAR(100)
+	IN P_MG_TITLE VARCHAR(100),
+    IN P_MG_PATH  VARCHAR(500)
 )
 BEGIN
 	DECLARE V_MG_ID  INT DEFAULT 0;
@@ -82,15 +84,16 @@ BEGIN
 		     VALUES 
              (
 				V_MG_ID,
-                P_MG_TITLE
-                SYSDATE()
+                P_MG_TITLE,
+                P_MG_PATH,
+                CURRENT_DATE()
              );
     END IF;
 END
 
 CREATE PROCEDURE `REGISTER_CHAPTERS`(
     IN P_MG_ID INT,
-    IN P_MGC_PATH VARCHAR(500)
+    IN P_MGC_ARCHIVE VARCHAR(500)
 )
 BEGIN
 	DECLARE V_MGC_ID INT DEFAULT 0;
@@ -112,8 +115,8 @@ BEGIN
 				V_MGC_ID,
                 P_MG_ID,
                 V_SEQ,
-                P_MGC_PATH,
-                SYSDATE()
+                P_MGC_ARCHIVE,
+                CURRENT_DATE()
              );
     END IF;
 END
