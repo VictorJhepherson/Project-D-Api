@@ -1,7 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const mysql = require('../mysql').pool;
-const fs = require('fs');
+const AWS = require('aws-sdk');
+
+const S3 = new AWS.S3({
+    accessKeyId: process.env.AWS_ID,
+    secretAccessKey: process.env.AWS_SECRET
+});
 
 exports.getAll = (req, res, next) => {
     mysql.getConnection((error, conn) => {
@@ -50,29 +55,35 @@ exports.registerMangas = (req, res, next) => {
     mysql.getConnection((error, conn) => {
         if(error) { return res.status(500).send({ error: error }) }
         conn.query(
-            'CALL REGISTER_MANGAS(?, ?);', 
-            [ req.body.MG_TITLE, req.body.MG_PATH ],
+            'CALL REGISTER_MANGAS(?);', 
+            [ req.body.MG_TITLE ],
             (error, result, field) => {
                 if(error) {
                     res.status(409).send({ error: error, mensagem: 'Não foi possível cadastrar o mangá'})
                 } else {
-                    const path = req.body.MG_PATH;
-                    fs.readdir(path, (err, files) => {
-                        if(err) { return res.status(500).send({ error: err, mensagem: 'Leitura da pasta' }) }
-                        files.forEach(file => {
+                    const params = {
+                        Bucket: process.env.AWS_BUCKET_NAME,
+                        Key: 'Chapters/' + req.file.filename,
+                        Body: req.file.data
+                    };
+
+                    S3.upload(params, (error, data) => {
+                        if(error) {
+                            return res.status(500).send({ error: error, mensagem: 'Não foi possível fazer o upload do PDF', data: params, file: req.file });
+                        } else {
                             conn.query(
                                 'CALL REGISTER_CHAPTERS(?, ?);', 
-                                [ result.insertId, file ],
+                                [ result.insertId, data.Location ],
                                 (error, result, field) => {
                                     conn.release();
-                                    if(error) { return res.status(500).send({ error: error, mensagem: 'REGISTER_CHAPTERS' }) }
+                                    if(error) { return res.status(500).send({ error: error, mensagem: 'Não foi possível cadastrar o capítulo', data: data }) }
                     
                                     return res.status(201).send({
                                         mensagem: 'Mangá criado com sucesso'
                                     });
                                 }
                             );
-                        });
+                        }
                     });
                 }
             }

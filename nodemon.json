@@ -7,6 +7,9 @@
         "MYSQL_PORT": 3306,
 
         "JWT_KEY": "KeyProjectDApi#374",
-        "URL_API": "https://project-d-api.herokuapp.com/"
+        "URL_API": "https://project-d-api.herokuapp.com/",
+        "AWS_ID": "",
+        "AWS_SECRECT": "",
+        "AWS_BUCKET_NAME": ""
     }
 }

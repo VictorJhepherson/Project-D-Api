@@ -21,7 +21,6 @@ CREATE TABLE IF NOT EXISTS MANGAS
 (
     MG_ID         INT NOT NULL PRIMARY KEY,
     MG_TITLE      VARCHAR(100),
-    MG_PATH       VARCHAR(500),
 	MG_REGDATE    DATE
 );
 
@@ -69,8 +68,7 @@ BEGIN
 END
 
 CREATE PROCEDURE `REGISTER_MANGAS`(
-	IN P_MG_TITLE VARCHAR(100),
-    IN P_MG_PATH  VARCHAR(500)
+	IN P_MG_TITLE VARCHAR(100)
 )
 BEGIN
 	DECLARE V_MG_ID  INT DEFAULT 0;
@@ -85,7 +83,6 @@ BEGIN
              (
 				V_MG_ID,
                 P_MG_TITLE,
-                P_MG_PATH,
                 CURRENT_DATE()
              );
     END IF;
