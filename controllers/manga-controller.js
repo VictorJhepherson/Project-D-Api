@@ -67,7 +67,7 @@ exports.registerMangas = (req, res, next) => {
                         } else {
                             const params = {
                                 Bucket: process.env.AWS_BUCKET_NAME,
-                                Key: 'Chapters/' + req.file.filename,
+                                Key: 'Chapters/' + req.file.originalname,
                                 Body: req.file.buffer
                             };
         
