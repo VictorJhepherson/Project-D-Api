@@ -61,28 +61,34 @@ exports.registerMangas = (req, res, next) => {
                 if(error) {
                     res.status(409).send({ error: error, mensagem: 'Não foi possível cadastrar o mangá'})
                 } else {
-                    const params = {
-                        Bucket: process.env.AWS_BUCKET_NAME,
-                        Key: 'Chapters/' + req.file.filename,
-                        Body: req.file.buffer
-                    };
-
-                    S3.upload(params, (error, data) => {
+                    conn.query('SELECT MAX(MG_ID) FROM MANGAS', (error, results, field) => {
                         if(error) {
-                            return res.status(500).send({ error: error, mensagem: 'Não foi possível fazer o upload do PDF', data: params, file: req.file });
+                            res.status(409).send({ error: error, mensagem: 'Não foi possível selecionar o MG_ID' });
                         } else {
-                            conn.query(
-                                'CALL REGISTER_CHAPTERS(?, ?);', 
-                                [ result.insertId, data.Location ],
-                                (error, result, field) => {
-                                    conn.release();
-                                    if(error) { return res.status(500).send({ error: error, mensagem: 'Não foi possível cadastrar o capítulo', data: data }) }
-                    
-                                    return res.status(201).send({
-                                        mensagem: 'Mangá criado com sucesso'
-                                    });
+                            const params = {
+                                Bucket: process.env.AWS_BUCKET_NAME,
+                                Key: 'Chapters/' + req.file.filename,
+                                Body: req.file.buffer
+                            };
+        
+                            S3.upload(params, (error, data) => {
+                                if(error) {
+                                    return res.status(500).send({ error: error, mensagem: 'Não foi possível fazer o upload do PDF', data: params, file: req.file });
+                                } else {
+                                    conn.query(
+                                        'CALL REGISTER_CHAPTERS(?, ?);', 
+                                        [ results.MG_ID, data.Location ],
+                                        (error, result, field) => {
+                                            conn.release();
+                                            if(error) { return res.status(500).send({ error: error, mensagem: 'Não foi possível cadastrar o capítulo', data: data }) }
+                            
+                                            return res.status(201).send({
+                                                mensagem: 'Mangá criado com sucesso'
+                                            });
+                                        }
+                                    );
                                 }
-                            );
+                            });
                         }
                     });
                 }
