@@ -77,7 +77,7 @@ exports.registerMangas = (req, res, next) => {
                                 } else {
                                     conn.query(
                                         'CALL REGISTER_CHAPTERS(?, ?);', 
-                                        [ results.MG_ID, data.Location ],
+                                        [ results[0].MG_ID, data.Location ],
                                         (error, result, field) => {
                                             conn.release();
                                             if(error) { return res.status(500).send({ error: error, mensagem: 'Não foi possível cadastrar o capítulo', data: data }) }
