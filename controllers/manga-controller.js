@@ -83,7 +83,8 @@ exports.registerMangas = (req, res, next) => {
                                             if(error) { return res.status(500).send({ error: error, mensagem: 'Não foi possível cadastrar o capítulo', data: data }) }
                             
                                             return res.status(201).send({
-                                                mensagem: 'Mangá criado com sucesso'
+                                                mensagem: 'Mangá criado com sucesso',
+                                                data: results
                                             });
                                         }
                                     );
