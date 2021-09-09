@@ -61,7 +61,7 @@ exports.registerMangas = (req, res, next) => {
                 if(error) {
                     res.status(409).send({ error: error, mensagem: 'Não foi possível cadastrar o mangá'})
                 } else {
-                    conn.query('SELECT MAX(MG_ID) FROM MANGAS', (error, results, field) => {
+                    conn.query('SELECT MAX(MG_ID) AS MG_ID FROM MANGAS', (error, results, field) => {
                         if(error) {
                             res.status(409).send({ error: error, mensagem: 'Não foi possível selecionar o MG_ID' });
                         } else {
