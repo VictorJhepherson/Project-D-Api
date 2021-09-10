@@ -77,11 +77,11 @@ exports.registerUsers = (req, res, next) => {
                 bcrypt.hash(req.body.SU_PASSWORD, 10, (errBcrypt, hash) => {
                     if(errBcrypt){ return res.status(500).send({ error: errBcrypt }) }
                     conn.query(
-                        'CALL REGISTER_SYSTEMUSERS(?, ?, ?, ?, ?, ?);', 
+                        'CALL REGISTER_SYSTEMUSERS(?, ?, ?, ?, ?, ?, ?);', 
                         [
                             req.body.SU_NICKNAME, req.body.SU_LOGINNAME, 
-                            hash, req.body.SU_PHONENUMBER, 
-                            req.body.SU_DATEBIRTHDAY, req.body.SU_PHOTO
+                            hash, req.body.SU_PHONENUMBER, req.body.SU_DATEBIRTHDAY, 
+                            req.body.SU_PHOTO, req.body.SU_TYPE
                         ],
                         (error, result, field) => {
                             conn.release();
