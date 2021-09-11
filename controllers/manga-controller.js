@@ -65,11 +65,9 @@ exports.registerMangas = (req, res, next) => {
                         if(error) {
                             res.status(409).send({ error: error, mensagem: 'Não foi possível selecionar o MG_ID' });
                         } else {
-                            res.status(500).send({ error: 'Upload Fail', file: req })
-                            /*
                             const params = {
                                 Bucket: process.env.AWS_BUCKET_NAME,
-                                Key: 'Chapters/' + req.file.originalname,
+                                Key: 'Chapters/' + new Date().toISOString(),
                                 Body: req.file.buffer
                             };
         
@@ -91,7 +89,7 @@ exports.registerMangas = (req, res, next) => {
                                         }
                                     );
                                 }
-                            });*/
+                            });
                         }
                     });
                 }
