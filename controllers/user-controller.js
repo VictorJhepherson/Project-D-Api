@@ -9,7 +9,7 @@ exports.getUserById = (req, res, next) => {
         const query = `SELECT * 
                          FROM SYSTEMUSERS
                         WHERE SU_ID = ?`;
-        conn.query(query, [req.body.SU_ID], (error, results, fields) => {
+        conn.query(query, [req.params.user], (error, results, fields) => {
             conn.release();
             if(error) { return res.status(500).send({ error: error }) }
             
