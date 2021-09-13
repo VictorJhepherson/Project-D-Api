@@ -5,6 +5,6 @@ const login = require('../middleware/login');
 
 const UserController = require('../controllers/user-controller');
 
-router.get('/getUser/:id', login, UserController.getUserById);
+router.get('/getUser/:id', UserController.getUserById);
 
 module.exports = router;
