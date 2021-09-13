@@ -11,7 +11,7 @@ exports.getUserById = (req, res, next) => {
                         INNER JOIN AVATARS
                            ON SYSTEMUSERS.SU_PHOTO = AVATARS.AVATAR_ID
                         WHERE SYSTEMUSERS.SU_ID = ?`;
-        conn.query(query, [req.body.SU_ID], (error, results, fields) => {
+        conn.query(query, [req.params.user], (error, results, fields) => {
             conn.release();
             if(error) { return res.status(500).send({ error: error }) }
             
