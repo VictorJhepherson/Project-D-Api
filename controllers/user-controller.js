@@ -31,11 +31,10 @@ exports.editUser = (req, res, next) => {
                 res.status(409).send({ mensagem: 'E-mail já cadastrado', error: 0 })
             } else {
                 conn.query(
-                    'CALL EDIT_SYSTEMUSERS(?, ?, ?, ?, ?, ?);', 
+                    'CALL EDIT_SYSTEMUSERS(?, ?, ?, ?, ?);', 
                     [
                         req.body.SU_NICKNAME, req.body.SU_LOGINNAME, 
-                        req.body.SU_PHONENUMBER, req.body.SU_DATEBIRTHDAY, 
-                        req.body.SU_PHOTO, req.body.SU_ID
+                        req.body.SU_PHONENUMBER, req.body.SU_PHOTO, req.body.SU_ID
                     ],
                     (error, result, field) => {
                         conn.release();
