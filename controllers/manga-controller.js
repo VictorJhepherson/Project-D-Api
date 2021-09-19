@@ -70,13 +70,12 @@ exports.registerMangas = (req, res, next) => {
                         if(error) {
                             res.status(409).send({ error: error, mensagem: 'Não foi possível selecionar o MG_ID' });
                         } else {
+                            console.log(req.file);
                             const params = {
                                 Bucket: process.env.AWS_BUCKET_NAME,
                                 Key: 'Chapters/' + req.file.originalname,
                                 Body: req.file.buffer
                             };
-
-                            console.log(req.file);
         
                             S3.upload(params, (error, data) => {
                                 if(error) {
