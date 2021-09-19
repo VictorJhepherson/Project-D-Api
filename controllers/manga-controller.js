@@ -70,9 +70,10 @@ exports.registerMangas = (req, res, next) => {
                         if(error) {
                             res.status(409).send({ error: error, mensagem: 'Não foi possível selecionar o MG_ID' });
                         } else {
-                            const params = {
+                            res.status(201).send({ file: req.file, request: req });
+                            /*const params = {
                                 Bucket: process.env.AWS_BUCKET_NAME,
-                                Key: 'Chapters/' + new Date().toISOString(),
+                                Key: 'Chapters/' + req.file.originalname,
                                 Body: req.file.buffer
                             };
         
@@ -94,7 +95,7 @@ exports.registerMangas = (req, res, next) => {
                                         }
                                     );
                                 }
-                            });
+                            });*/
                         }
                     });
                 }
