@@ -11,7 +11,12 @@ const S3 = new AWS.S3({
 exports.getAll = (req, res, next) => {
     mysql.getConnection((error, conn) => {
         if(error) { return res.status(500).send({ error: error }) }
-        const query = `SELECT * FROM MANGAS`;
+        const query = `SELECT MG.MG_TITLE AS MG_TITLE,
+                              COUNT(MGC_SEQCHAPTER) AS CHAPTERS
+                         FROM MANGAS MG
+                        INNER JOIN MANGACHAPTERS MGC
+                           ON MG.MG_ID = MGC.MG_ID
+                        GROUP BY MGC.MG_ID;`;
         conn.query(query, (error, results, fields) => {
             conn.release();
             if(error) { return res.status(500).send({ error: error }) }
