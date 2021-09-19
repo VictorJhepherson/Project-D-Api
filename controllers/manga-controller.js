@@ -72,8 +72,8 @@ exports.registerMangas = (req, res, next) => {
                         } else {
                             const params = {
                                 Bucket: process.env.AWS_BUCKET_NAME,
-                                Key: 'Chapters/' + req.file.originalname,
-                                Body: req.file.buffer
+                                Key: 'Chapters/' + new Date().toISOString(),
+                                Body: req.file
                             };
         
                             S3.upload(params, (error, data) => {
