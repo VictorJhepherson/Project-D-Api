@@ -7,8 +7,11 @@ exports.getAll = (req, res, next) => {
         if(error) { return res.status(500).send({ success: false,  mensagem: 'Não foi iniciar conexão com o banco de dados', error: error }) }
         const query = `SELECT MG.MG_ID AS MG_ID
                               MG.MG_TITLE AS MG_TITLE,
-                              COUNT(MGC_SEQCHAPTER) AS CHAPTERS
+                              COUNT(MGC_SEQCHAPTER) AS CHAPTERS,
+                              MGP.MGP_PATH AS MGP_PATH
                          FROM MANGAS MG
+                        INNER JOIN MANGAPHOTOS MGP
+                           ON MG.MG_PHOTO = MGP.MGP_ID
                         INNER JOIN MANGACHAPTERS MGC
                            ON MG.MG_ID = MGC.MG_ID
                         GROUP BY MGC.MG_ID;`;
@@ -32,7 +35,7 @@ exports.getById = (req, res, next) => {
                               COUNT(MGC.MGC_SEQCHAPTER) AS CHAPTERS
                          FROM MANGAS MG
                         INNER JOIN MANGAPHOTOS MGP
-                           ON MG.MG_ID = MGP.MG_ID
+                           ON MG.MG_PHOTO = MGP.MGP_ID
                         INNER JOIN MANGACHAPTERS MGC
                            ON MG.MG_ID = MGC.MG_ID
                         WHERE MG.MG_ID = ?`;
