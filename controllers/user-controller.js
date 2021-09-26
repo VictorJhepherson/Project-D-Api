@@ -15,7 +15,10 @@ exports.getUserById = (req, res, next) => {
             conn.release();
             if(error) { return res.status(500).send({ success: false, mensagem: 'Não foi possível pesquisar os usuários', error: error }) }
             
-            return res.status(200).send({ success: true, mensagem: 'Pesquisa realizada com sucesso', data: results });
+            if(results.length < 1)
+                return res.status(500).send({ success: false, mensagem: 'Não foi encontrado registros' });
+            else
+                return res.status(200).send({ success: true, mensagem: 'Pesquisa realizada com sucesso', data: results });
         });
     });
 };

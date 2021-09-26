@@ -16,7 +16,10 @@ exports.getAll = (req, res, next) => {
             conn.release();
             if(error) { return res.status(500).send({ success: false, mensagem: 'Não foi possível pesquisar os mangás', error: error }) }
             
-            return res.status(200).send({ success: true, mensagem: 'Pesquisa realizada com sucesso', data: results[0] });
+            if(results.lenght < 1)
+                return res.status(500).send({ success: false, mensagem: 'Não foi encontrado registros' });
+            else 
+                return res.status(200).send({ success: true, mensagem: 'Pesquisa realizada com sucesso', data: results[0] });
         });
     });
 };
@@ -37,7 +40,10 @@ exports.getById = (req, res, next) => {
             conn.release();
             if(error) { return res.status(500).send({ success: false, mensagem: 'Não foi possível pesquisar os mangás', error: error }) }
             
-            return res.status(200).send({ success: true, mensagem: 'Pesquisa realizada com sucesso', data: results[0] });
+            if(results.lenght < 1)
+                return res.status(500).send({ success: false, mensagem: 'Não foi encontrado registros' }); 
+            else
+                return res.status(200).send({ success: true, mensagem: 'Pesquisa realizada com sucesso', data: results[0] });
         });
     });
 };
@@ -52,7 +58,10 @@ exports.getByName = (req, res, next) => {
             conn.release();
             if(error) { return res.status(500).send({ success: false, mensagem: 'Não foi possível pesquisar os mangás', error: error }) }
             
-            return res.status(200).send({ success: true, mensagem: 'Pesquisa realizada com sucesso', data: results[0] });
+            if(results.lenght < 1)
+                return res.status(500).send({ success: false, mensagem: 'Não foi encontrado registros' });
+            else
+                return res.status(200).send({ success: true, mensagem: 'Pesquisa realizada com sucesso', data: results[0] });
         });
     });
 };
