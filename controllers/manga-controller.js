@@ -1,17 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const mysql = require('../mysql').pool;
-const AWS = require('aws-sdk');
-
-const S3 = new AWS.S3({
-    accessKeyId: process.env.AWS_ID,
-    secretAccessKey: process.env.AWS_SECRET
-});
 
 exports.getAll = (req, res, next) => {
     mysql.getConnection((error, conn) => {
-        if(error) { return res.status(500).send({ error: error }) }
-        const query = `SELECT MG.MG_TITLE AS MG_TITLE,
+        if(error) { return res.status(500).send({ success: false,  mensagem: 'Não foi iniciar conexão com o banco de dados', error: error }) }
+        const query = `SELECT MG.MG_ID AS MG_ID
+                              MG.MG_TITLE AS MG_TITLE,
                               COUNT(MGC_SEQCHAPTER) AS CHAPTERS
                          FROM MANGAS MG
                         INNER JOIN MANGACHAPTERS MGC
@@ -19,86 +14,76 @@ exports.getAll = (req, res, next) => {
                         GROUP BY MGC.MG_ID;`;
         conn.query(query, (error, results, fields) => {
             conn.release();
-            if(error) { return res.status(500).send({ error: error }) }
+            if(error) { return res.status(500).send({ success: false, mensagem: 'Não foi possível pesquisar os mangás', error: error }) }
             
-            return res.status(200).send({ data: results[0] });
+            return res.status(200).send({ success: true, mensagem: 'Pesquisa realizada com sucesso', data: results[0] });
         });
     });
 };
 
 exports.getById = (req, res, next) => {
     mysql.getConnection((error, conn) => {
-        if(error) { return res.status(500).send({ error: error }) }
-        const query = `SELECT * 
-                         FROM MANGAS
-                        WHERE MG_ID = ?`;
+        if(error) { return res.status(500).send({ success: false,  mensagem: 'Não foi iniciar conexão com o banco de dados', error: error}) }
+        const query = `SELECT MG.MG_TITLE AS MG_TITLE,
+                              MGP.MGP_PATH AS MGP_PATH,
+                              COUNT(MGC.MGC_SEQCHAPTER) AS CHAPTERS
+                         FROM MANGAS MG
+                        INNER JOIN MANGAPHOTOS MGP
+                           ON MG.MG_ID = MGP.MG_ID
+                        INNER JOIN MANGACHAPTERS MGC
+                           ON MG.MG_ID = MGC.MG_ID
+                        WHERE MG.MG_ID = ?`;
         conn.query(query, [req.params.MG_ID], (error, results, fields) => {
             conn.release();
-            if(error) { return res.status(500).send({ error: error }) }
+            if(error) { return res.status(500).send({ success: false, mensagem: 'Não foi possível pesquisar os mangás', error: error }) }
             
-            return res.status(200).send({ data: results[0] });
+            return res.status(200).send({ success: true, mensagem: 'Pesquisa realizada com sucesso', data: results[0] });
         });
     });
 };
 
 exports.getByName = (req, res, next) => {
     mysql.getConnection((error, conn) => {
-        if(error) { return res.status(500).send({ error: error }) }
+        if(error) { return res.status(500).send({ success: false,  mensagem: 'Não foi iniciar conexão com o banco de dados', error: error }) }
         const query = `SELECT * 
                          FROM MANGAS
                         WHERE MG_TITLE LIKE '%?%'`;
         conn.query(query, [req.body.MG_TITLE], (error, results, fields) => {
             conn.release();
-            if(error) { return res.status(500).send({ error: error }) }
+            if(error) { return res.status(500).send({ success: false, mensagem: 'Não foi possível pesquisar os mangás', error: error }) }
             
-            return res.status(200).send({ data: results[0] });
+            return res.status(200).send({ success: true, mensagem: 'Pesquisa realizada com sucesso', data: results[0] });
         });
     });
 };
 
 exports.registerMangas = (req, res, next) => {
     mysql.getConnection((error, conn) => {
-        if(error) { return res.status(500).send({ error: error }) }
+        if(error) { return res.status(500).send({ success: false,  mensagem: 'Não foi iniciar conexão com o banco de dados', error: error }) }
         conn.query(
-            'CALL REGISTER_MANGAS(?);', 
-            [ req.body.MG_TITLE ],
+            'CALL REGISTER_MANGAS(?, ?);', 
+            [ req.body.MG_TITLE, req.body.MG_PHOTO ],
             (error, result, field) => {
-                if(error) {
-                    res.status(409).send({ error: error, mensagem: 'Não foi possível cadastrar o mangá'})
-                } else {
-                    conn.query('SELECT MAX(MG_ID) AS MG_ID FROM MANGAS', (error, results, field) => {
-                        if(error) {
-                            res.status(409).send({ error: error, mensagem: 'Não foi possível selecionar o MG_ID' });
-                        } else {
-                            console.log(req.file);
-                            const params = {
-                                Bucket: process.env.AWS_BUCKET_NAME,
-                                Key: 'Chapters/' + req.file.originalname,
-                                Body: req.file.buffer
-                            };
-        
-                            S3.upload(params, (error, data) => {
-                                if(error) {
-                                    return res.status(500).send({ error: error, mensagem: 'Não foi possível fazer o upload do PDF', data: params, file: req.file });
-                                } else {
-                                    conn.query(
-                                        'CALL REGISTER_CHAPTERS(?, ?);', 
-                                        [ results[0].MG_ID, data.Location ],
-                                        (error, result, field) => {
-                                            conn.release();
-                                            if(error) { return res.status(500).send({ error: error, mensagem: 'Não foi possível cadastrar o capítulo', data: data }) }
+                conn.release();
+                if(error) { return res.status(500).send({ success: false, mensagem: 'Não foi possível cadastrar o mangá', error: error }) }
                             
-                                            return res.status(201).send({
-                                                mensagem: 'Mangá criado com sucesso',
-                                                data: results
-                                            });
-                                        }
-                                    );
-                                }
-                            });
-                        }
-                    });
-                }
+                return res.status(200).send({ success: true, mensagem: 'Mangá cadastrado com sucesso' })
+            }
+        );
+    });
+};
+
+exports.registerChapters = (req, res, next) => {
+    mysql.getConnection((error, conn) => {
+        if(error) { return res.status(500).send({ success: false,  mensagem: 'Não foi iniciar conexão com o banco de dados', error: error }) }
+        conn.query(
+            'CALL REGISTER_CHAPTERS(?, ?, ?);', 
+            [ req.body.MG_ID, req.body.MGF_ARCHIVE, req.body.MGC_SEQCHAPTER ],
+            (error, result, field) => {
+                conn.release();
+                if(error) { return res.status(500).send({ success: false, mensagem: 'Não foi possível cadastrar o capítulo', error: error }) }
+                            
+                return res.status(200).send({ success: true, mensagem: 'Capítulo cadastrado com sucesso' })
             }
         );
     });
