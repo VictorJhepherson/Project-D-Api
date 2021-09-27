@@ -22,7 +22,7 @@ exports.getAll = (req, res, next) => {
             if(results.lenght < 1)
                 return res.status(500).send({ success: false, mensagem: 'Não foi encontrado registros' });
             else 
-                return res.status(200).send({ success: true, mensagem: 'Pesquisa realizada com sucesso', data: results });
+                return res.status(200).send({ success: true, mensagem: 'Pesquisa realizada com sucesso', data: results[0] });
         });
     });
 };
@@ -65,7 +65,7 @@ exports.getByName = (req, res, next) => {
             if(results.lenght < 1)
                 return res.status(500).send({ success: false, mensagem: 'Não foi encontrado registros' });
             else
-                return res.status(200).send({ success: true, mensagem: 'Pesquisa realizada com sucesso', data: results });
+                return res.status(200).send({ success: true, mensagem: 'Pesquisa realizada com sucesso', data: results[0] });
         });
     });
 };
