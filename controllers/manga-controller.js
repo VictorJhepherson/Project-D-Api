@@ -12,7 +12,7 @@ exports.getAll = (req, res, next) => {
                          FROM MANGAS MG
                         INNER JOIN MANGAPHOTOS MGP
                            ON MG.MG_PHOTO = MGP.MGP_ID
-                        INNER JOIN MANGACHAPTERS MGC
+                         LEFT JOIN MANGACHAPTERS MGC
                            ON MG.MG_ID = MGC.MG_ID
                         GROUP BY MGC.MG_ID;`;
         conn.query(query, (error, results, fields) => {
