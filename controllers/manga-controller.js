@@ -36,7 +36,7 @@ exports.getById = (req, res, next) => {
                          FROM MANGAS MG
                         INNER JOIN MANGAPHOTOS MGP
                            ON MG.MG_PHOTO = MGP.MGP_ID
-                        INNER JOIN MANGACHAPTERS MGC
+                         LEFT JOIN MANGACHAPTERS MGC
                            ON MG.MG_ID = MGC.MG_ID
                         WHERE MG.MG_ID = ?
                         GROUP BY MG.MG_ID;`;
