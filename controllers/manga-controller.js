@@ -91,7 +91,7 @@ exports.registerChapters = (req, res, next) => {
         if(error) { return res.status(500).send({ success: false,  mensagem: 'Não foi iniciar conexão com o banco de dados', error: error }) }
         conn.query(
             'CALL REGISTER_CHAPTERS(?, ?, ?);', 
-            [ req.body.MG_ID, req.body.MGF_ARCHIVE, req.body.MGC_SEQCHAPTER ],
+            [ req.body.MG_ID, req.body.MGC_ARCHIVE, req.body.MGC_SEQCHAPTER ],
             (error, result, field) => {
                 conn.release();
                 if(error) { return res.status(500).send({ success: false, mensagem: 'Não foi possível cadastrar o capítulo', error: error }) }
