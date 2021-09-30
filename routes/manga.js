@@ -27,7 +27,7 @@ const upload = multer({
 router.get('/', login, MangaController.getAll);
 router.get('/:MG_ID', login, MangaController.getById);
 router.post('/byName', login, MangaController.getByName);
-router.post('/title', upload.single('MGC_ARCHIVE'), login, MangaController.registerMangas);
+router.post('/title', upload.single('MG_PHOTO'), login, MangaController.registerMangas);
 router.post('/chapters', login, MangaController.registerChapters);
 
 module.exports = router;
