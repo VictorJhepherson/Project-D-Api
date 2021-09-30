@@ -1,6 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const mysql = require('../mysql').pool;
+const AWS = require('aws-sdk');
+
+const S3 = new AWS.S3({
+    accessKeyId: process.env.AWS_ID,
+    secretAccessKey: process.env.AWS_SECRET
+});
 
 exports.getAll = (req, res, next) => {
     mysql.getConnection((error, conn) => {
@@ -52,17 +58,29 @@ exports.getByName = (req, res, next) => {
 
 exports.registerMangas = (req, res, next) => {
     mysql.getConnection((error, conn) => {
-        if(error) { return res.status(500).send({ success: false,  mensagem: 'Não foi iniciar conexão com o banco de dados', error: error }) }
-        conn.query(
-            'CALL REGISTER_MANGAS(?, ?);', 
-            [ req.body.MG_TITLE, req.body.MG_PHOTO ],
-            (error, result, field) => {
-                conn.release();
-                if(error) { return res.status(500).send({ success: false, mensagem: 'Não foi possível cadastrar o mangá', error: error }) }
-                            
-                return res.status(200).send({ success: true, mensagem: 'Mangá cadastrado com sucesso' })
+        if(error) { return res.status(500).send({ success: false,  mensagem: 'Não foi possível iniciar conexão com o banco de dados', error: error }) }
+
+        const params = {
+            Bucket: process.env.AWS_BUCKET_NAME,
+            Key: 'Photos/' + req.file.filename,
+            Body: req.file.buffer
+        };
+
+        S3.upload(params, (error, data) => {
+            if(error) { return res.status(500).send({ success: false,  mensagem: 'Não foi possível realizar o upload da imagem', error: error }) }
+            else {
+                conn.query(
+                    'CALL REGISTER_MANGAS(?, ?);', 
+                    [ req.body.MG_TITLE, data.Location ],
+                    (error, result, field) => {
+                        conn.release();
+                        if(error) { return res.status(500).send({ success: false, mensagem: 'Não foi possível cadastrar o mangá', error: error }) }
+                                    
+                        return res.status(200).send({ success: true, mensagem: 'Mangá cadastrado com sucesso' })
+                    }
+                );
             }
-        );
+        });
     });
 };
 
