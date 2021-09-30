@@ -8,6 +8,9 @@ const MangaController = require('../controllers/manga-controller');
 const storage = multer.memoryStorage({
     destination: function (req, file, cb){
         cb(null, './uploads/');
+    },
+    filename: function(req, file, cb){
+        cb(null, new Date().toISOString() + file.originalname);
     }
 });
 

@@ -59,7 +59,9 @@ exports.getByName = (req, res, next) => {
 exports.registerMangas = (req, res, next) => {
     mysql.getConnection((error, conn) => {
         if(error) { return res.status(500).send({ success: false,  mensagem: 'Não foi possível iniciar conexão com o banco de dados', error: error }) }
-        
+
+        console.log(req.body, req.file);
+
         const params = {
             Bucket: process.env.AWS_BUCKET_NAME,
             Key: 'Photos/' + new Date().toISOString() + req.file.originalname,
