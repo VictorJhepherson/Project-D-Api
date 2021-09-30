@@ -7,11 +7,13 @@ const MangaController = require('../controllers/manga-controller');
 
 const storage = multer.memoryStorage({
     destination: function (req, file, cb){
+        console.log(file);
         cb(null, '');
     }
 });
 
 const fileFilter = (req, file, cb) => {
+    console.log(file);
     if(file.mimetype === 'image/jpeg' || file.mimetype === 'image/png' || file.mimetype === 'image/jpg'){
         cb(null, true);
     } else {
