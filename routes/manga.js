@@ -7,7 +7,7 @@ const MangaController = require('../controllers/manga-controller');
 
 const storage = multer.memoryStorage({
     destination: function (req, file, cb){
-        cb(null, '');
+        cb(null, './uploads/');
     }
 });
 
@@ -19,7 +19,10 @@ const fileFilter = (req, file, cb) => {
     }
 }
 
-const upload = multer({ dest: './uploads' });
+const upload = multer({ 
+    storage: storage,
+    fileFilter: fileFilter
+});
 
 router.get('/', login, MangaController.getAll);
 router.get('/:MG_ID', login, MangaController.getById);
