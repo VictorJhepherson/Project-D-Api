@@ -12,7 +12,7 @@ const storage = multer.memoryStorage({
 });
 
 const fileFilter = (req, file, cb) => {
-    if(file.mimetype === 'image/jpeg' || file.mimetype === 'image/png' || file.mimetype === 'image/jpg'){
+    if(file.mimetype === 'image/jpeg' || file.mimetype === 'image/png' || file.mimetype === 'image/jpg' || file.mimetype === 'application/pdf'){
         cb(null, true);
     } else {
         cb(null, false);
@@ -28,6 +28,6 @@ router.get('/', login, MangaController.getAll);
 router.get('/:MG_ID', login, MangaController.getById);
 router.post('/byName', login, MangaController.getByName);
 router.post('/title', upload.single('MG_PHOTO'), login, MangaController.registerMangas);
-router.post('/chapters', login, MangaController.registerChapters);
+router.post('/chapters', upload.single('MGC_ARCHIVE'), login, MangaController.registerChapters);
 
 module.exports = router;

@@ -87,15 +87,27 @@ exports.registerMangas = (req, res, next) => {
 exports.registerChapters = (req, res, next) => {
     mysql.getConnection((error, conn) => {
         if(error) { return res.status(500).send({ success: false,  mensagem: 'Não foi iniciar conexão com o banco de dados', error: error }) }
-        conn.query(
-            'CALL REGISTER_CHAPTERS(?, ?, ?);', 
-            [ req.body.MG_ID, req.body.MGC_ARCHIVE, req.body.MGC_SEQCHAPTER ],
-            (error, result, field) => {
-                conn.release();
-                if(error) { return res.status(500).send({ success: false, mensagem: 'Não foi possível cadastrar o capítulo', error: error }) }
-                            
-                return res.status(200).send({ success: true, mensagem: 'Capítulo cadastrado com sucesso' })
+
+        const params = {
+            Bucket: process.env.AWS_BUCKET_NAME,
+            Key: 'Chapters/' + new Date().toISOString() + req.file.originalname,
+            Body: req.file.buffer
+        };
+
+        S3.upload(params, (error, data) => {
+            if(error) { return res.status(500).send({ success: false,  mensagem: 'Não foi possível realizar o upload do pdf', error: error }) }
+            else {
+                conn.query(
+                    'CALL REGISTER_CHAPTERS(?, ?, ?);', 
+                    [ req.body.MG_ID, data.Location, req.body.MGC_SEQCHAPTER ],
+                    (error, result, field) => {
+                        conn.release();
+                        if(error) { return res.status(500).send({ success: false, mensagem: 'Não foi possível cadastrar o capítulo', error: error }) }
+                                    
+                        return res.status(200).send({ success: true, mensagem: 'Capítulo cadastrado com sucesso' })
+                    }
+                );
             }
-        );
+        });
     });
 };
