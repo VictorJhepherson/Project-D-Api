@@ -64,7 +64,7 @@ exports.registerMangas = (req, res, next) => {
 
         const params = {
             Bucket: process.env.AWS_BUCKET_NAME,
-            Key: 'Photos/' + req.file.name,
+            Key: 'Photos/' + req.file.filename,
             Body: req.file.buffer
         };
 
