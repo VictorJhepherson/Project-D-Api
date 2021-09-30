@@ -19,18 +19,12 @@ const fileFilter = (req, file, cb) => {
     }
 }
 
-const upload = multer({ 
-    storage: storage,
-    fileFilter: fileFilter
-});
+const upload = multer({ dest: './uploads' });
 
 router.get('/', login, MangaController.getAll);
 router.get('/:MG_ID', login, MangaController.getById);
 router.post('/byName', login, MangaController.getByName);
-router.post('/title', upload.single('MGC_ARCHIVE'), login, async (req, res) => {
-    console.log(req.file);
-    MangaController.registerMangas
-});
+router.post('/title', upload.single('MGC_ARCHIVE'), login, MangaController.registerMangas);
 router.post('/chapters', login, MangaController.registerChapters);
 
 module.exports = router;
