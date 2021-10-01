@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 
 exports.login = (req, res, next) => {
     mysql.getConnection((error, conn) => {
-        if(error) { return res.status(500).send({ success: false,  mensagem: 'Não foi iniciar conexão com o banco de dados', error: error }) }
+        if(error) { return res.status(500).send({ success: false,  mensagem: 'Não foi possível iniciar conexão com o banco de dados', error: error }) }
         const query = `SELECT * 
                          FROM SYSTEMUSERS
                         INNER JOIN AVATARS
@@ -16,7 +16,7 @@ exports.login = (req, res, next) => {
             conn.release();
             if(error) { return res.status(500).send({ success: false,  mensagem: 'Não foi possível realizar a consulta', error: error }) }
             if (results.length < 1) {
-                return res.status(401).send({ mensagem: 'Falha na autenticação'});
+                return res.status(401).send({ success: false, mensagem: 'Falha na autenticação'});
             }
             bcrypt.compare(req.body.SU_PASSWORD, results[0].SU_PASSWORD, (err, result) => {
                 if (err) {
@@ -43,7 +43,7 @@ exports.logout = (req, res, next) => {
 exports.refresh = (req, res, next) => {
     if (req.body.token != null && req.body.token != undefined) {
         mysql.getConnection((error, conn) => {
-            if(error) { return res.status(500).send({ success: false,  mensagem: 'Não foi iniciar conexão com o banco de dados', error: error }) }
+            if(error) { return res.status(500).send({ success: false,  mensagem: 'Não foi possível iniciar conexão com o banco de dados', error: error }) }
             const query = `SELECT * 
                              FROM SYSTEMUSERS
                             INNER JOIN AVATARS
@@ -66,7 +66,7 @@ exports.refresh = (req, res, next) => {
 
 exports.registerUsers = (req, res, next) => {
     mysql.getConnection((error, conn) => {
-        if(error) { return res.status(500).send({ success: false,  mensagem: 'Não foi iniciar conexão com o banco de dados', error: error }) }
+        if(error) { return res.status(500).send({ success: false,  mensagem: 'Não foi possível iniciar conexão com o banco de dados', error: error }) }
         conn.query(`SELECT SU_LOGINNAME
                       FROM SYSTEMUSERS
                      WHERE SU_LOGINNAME = ?`, [req.body.SU_LOGINNAME], (error, results) => {

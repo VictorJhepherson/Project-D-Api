@@ -10,7 +10,7 @@ const S3 = new AWS.S3({
 
 exports.getAll = (req, res, next) => {
     mysql.getConnection((error, conn) => {
-        if(error) { return res.status(500).send({ success: false,  mensagem: 'Não foi iniciar conexão com o banco de dados', error: error }) }
+        if(error) { return res.status(500).send({ success: false,  mensagem: 'Não foi possível iniciar conexão com o banco de dados', error: error }) }
         const query = `CALL GET_ALLMANGA()`;
         conn.query(query, (error, results, fields) => {
             conn.release();
@@ -26,7 +26,7 @@ exports.getAll = (req, res, next) => {
 
 exports.getById = (req, res, next) => {
     mysql.getConnection((error, conn) => {
-        if(error) { return res.status(500).send({ success: false,  mensagem: 'Não foi iniciar conexão com o banco de dados', error: error}) }
+        if(error) { return res.status(500).send({ success: false,  mensagem: 'Não foi possível iniciar conexão com o banco de dados', error: error}) }
         const query = `CALL GET_MANGABYID(?)`;
         conn.query(query, [req.params.MG_ID], (error, results, fields) => {
             conn.release();
@@ -42,7 +42,7 @@ exports.getById = (req, res, next) => {
 
 exports.getByName = (req, res, next) => {
     mysql.getConnection((error, conn) => {
-        if(error) { return res.status(500).send({ success: false,  mensagem: 'Não foi iniciar conexão com o banco de dados', error: error }) }
+        if(error) { return res.status(500).send({ success: false,  mensagem: 'Não foi possível iniciar conexão com o banco de dados', error: error }) }
         const query = `CALL SEARCH_MANGA(?)`;
         conn.query(query, [req.body.MG_TITLE], (error, results, fields) => {
             conn.release();

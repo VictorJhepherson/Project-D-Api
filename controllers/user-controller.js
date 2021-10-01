@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 
 exports.getUserById = (req, res, next) => {
     mysql.getConnection((error, conn) => {
-        if(error) { return res.status(500).send({ success: false,  mensagem: 'Não foi iniciar conexão com o banco de dados', error: error }) }
+        if(error) { return res.status(500).send({ success: false,  mensagem: 'Não foi possível iniciar conexão com o banco de dados', error: error }) }
         const query = `SELECT * 
                          FROM SYSTEMUSERS
                         INNER JOIN AVATARS
@@ -25,7 +25,7 @@ exports.getUserById = (req, res, next) => {
 
 exports.editUser = (req, res, next) => {
     mysql.getConnection((error, conn) => {
-        if(error) { return res.status(500).send({ success: false,  mensagem: 'Não foi iniciar conexão com o banco de dados', error: error }) }
+        if(error) { return res.status(500).send({ success: false,  mensagem: 'Não foi possível iniciar conexão com o banco de dados', error: error }) }
         conn.query(`SELECT SU_LOGINNAME
                       FROM SYSTEMUSERS
                      WHERE SU_LOGINNAME = ?`, [req.body.SU_LOGINNAME], 
