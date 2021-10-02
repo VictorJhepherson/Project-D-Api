@@ -28,7 +28,8 @@ exports.editUser = (req, res, next) => {
         if(error) { return res.status(500).send({ success: false,  mensagem: 'Não foi possível iniciar conexão com o banco de dados', error: error }) }
         conn.query(`SELECT SU_LOGINNAME
                       FROM SYSTEMUSERS
-                     WHERE SU_LOGINNAME = ?`, [req.body.SU_LOGINNAME], 
+                     WHERE SU_LOGINNAME = ?
+                       AND SU_ID NOT IN(?)`, [req.body.SU_LOGINNAME, req.body.SU_ID], 
         (error, results) => {
             if(error) { return res.status(500).send({ success: false, mensagem: 'Não foi possível verificar se o email já está cadastrado', error: error }) }
             if(results.length > 0){
