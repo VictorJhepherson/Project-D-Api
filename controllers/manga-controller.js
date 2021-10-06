@@ -118,7 +118,7 @@ exports.getChapters = (req, res, next) => {
         const query = `CALL GET_CHAPTERS(?)`;
         conn.query(query, [req.params.MG_ID], (error, results, fields) => {
             conn.release();
-            if(error) { return res.status(500).send({ success: false, mensagem: 'Não foi possível pesquisar os mangás', error: error }) }
+            if(error) { return res.status(500).send({ success: false, mensagem: 'Não foi possível pesquisar os capítulos', error: error }) }
             
             if(results.lenght < 1)
                 return res.status(500).send({ success: false, mensagem: 'Não foi encontrado registros' });
